@@ -24,7 +24,7 @@ def handle_events():
                 game_framework.change_state(play_state)
 def draw():
     clear_canvas()
-    image.draw(400,300)
+    image.draw(600,450)
     update_canvas()
 
 def update():
