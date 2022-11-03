@@ -1,0 +1,18 @@
+from pico2d import *
+import game_framework
+
+class Map1:
+    def __init__(self):
+        self.image = load_image('resource/map1')
+
+    def draw(self):
+        self.image.draw(600, 450)
+
+    def update(self):
+        pass
+
+    def handle_events(self):
+        events = get_events()
+        for event in events():
+            if event.type == SDL_QUIT:
+                game_framework.quit()
