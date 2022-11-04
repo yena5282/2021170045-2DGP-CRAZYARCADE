@@ -3,7 +3,7 @@ import game_framework
 
 class Map1:
     def __init__(self):
-        self.image = load_image('resource/map1')
+        self.image = load_image('resource/map1.png')
 
     def draw(self):
         self.image.draw(600, 450)
