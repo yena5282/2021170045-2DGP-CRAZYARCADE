@@ -101,3 +101,4 @@ class Player2:
                     self.keyDownNum -= 1
                 case pico2d.SDLK_RIGHT:
                     self.keyDownNum -= 1
+
