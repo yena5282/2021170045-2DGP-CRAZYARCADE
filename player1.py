@@ -1,141 +1,103 @@
 from pico2d import *
-import game_world
-
-RD, LD, UD, DD, RU, LU, UU, DU = range(8)
-event_name = ['RD', 'LD', 'UD', 'DD', 'RU', 'LU', 'UU', 'DU']
-
-key_event_table = {
-    (SDL_KEYDOWN, SDLK_w): UD,
-    (SDL_KEYDOWN, SDLK_a): LD,
-    (SDL_KEYDOWN, SDLK_s): DD,
-    (SDL_KEYDOWN, SDLK_d): RD,
-    (SDL_KEYUP, SDLK_w): UU,
-    (SDL_KEYUP, SDLK_a): LU,
-    (SDL_KEYUP, SDLK_s): DU,
-    (SDL_KEYUP, SDLK_d): RU,
-}
+import game_framework
 
 p1Width = 65
 p1Height = 70
-class IDLE:
-    @staticmethod
-    def enter(self, event):
-        print('ENTER IDLE')
-        self.leftRight = 0
-        self.upDown = 0
-        self.face_dir = 1 # 처음 시작은 아래를 보고 시작하도록
 
-    @staticmethod
+# player1 달리는 속도 계산
+runPixel = 10.0
+PIXEL_PER_METER = (runPixel / 0.3)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-    def exit(self, event):
-        print('EXIT IDLE')
-
-    @staticmethod
-
-    def do(self):
-        pass
-        # self.frame = (self.frame + 1) % 5
-
-    @staticmethod
-
-    def draw(self):
-        if self.face_dir == 0: # 상
-            self.image.clip_draw(0, 210, p1Width, p1Height, self.x, self.y, 80, 95)
-        elif self.face_dir == 1: # 하
-            self.image.clip_draw(0, 140, p1Width, p1Height, self.x, self.y, 80, 95)
-        elif self.face_dir == 2: # 좌
-            self.image.clip_draw(0, 0, p1Width, p1Height, self.x, self.y, 80, 95)
-        elif self.face_dir == 3: # 우
-            self.image.clip_draw(0, 70, p1Width, p1Height, self.x, self.y, 80, 95)
-
-    @staticmethod
-    def do(self):
-        pass
-
-class RUN:
-    def enter(self, event):
-        print('ENTER RUN')
-        if event == RD:
-            self.leftRight += 1
-        elif event == LD:
-            self.leftRight -= 1
-        elif event == UD:
-            self.upDown += 1
-        elif event == DD:
-            self.upDown -= 1
-        elif event == RU:
-            self.leftRight -= 1
-        elif event == LU:
-            self.leftRight += 1
-        elif event == UU:
-            self.upDown -= 1
-        elif event == DU:
-            self.upDown += 1
-
-    def exit(self, event):
-        print('EXIT RUN')
-
-    def do(self):
-        self.frame = (self.frame + 1) % 5
-        if self.face_dir == 0 or self.face_dir == 1:
-            self.y += self.upDown
-            self.y = clamp(60, self.y, 840)
-        else:
-            self.x += self.leftRight
-            self.x = clamp(25, self.x, 930)
-
-
-    def draw(self):
-        if self.face_dir == 0:
-            self.image.clip_draw(self.frame * p1Width, 210, p1Width, p1Height, self.x, self.y, 80, 95)
-        elif self.face_dir == 1:
-            self.image.clip_draw(self.frame * p1Width, 140, p1Width, p1Height, self.x, self.y, 80, 95)
-        elif self.face_dir == 2:
-            self.image.clip_draw(self.frame * p1Width, 0, p1Width, p1Height, self.x, self.y, 80, 95)
-        elif self.face_dir == 3:
-            self.image.clip_draw(self.frame * p1Width, 70, p1Width, p1Height, self.x, self.y, 80, 95)
-
-# 어렵
-next_state = {
-    IDLE : {RU: RUN, LU: RUN, UU: RUN, DU: RUN, RD: RUN, LD: RUN, UD: RUN, DD: RUN},
-    RUN : {RU: IDLE, LU: IDLE, UU: IDLE, DU: IDLE, RD: IDLE, LD: IDLE, UD: IDLE, DD: IDLE}
-}
+# player1 애니메이션 속도 계산
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 5
 
 class Player1:
     def __init__(self):
-        self.x, self.y = 58, 105
-        self.frame = 0
-        self.face_dir = 1
-        self.upDown = 0
-        self.leftRight = 0
+        self.x = 58
+        self.y = 105
+        self.face_dir = 1  # 상, 하, 좌, 우 = 0, 1, 2, 3
+        self.running = False
+        self.image = None
         self.image = load_image('resource/Player1.png')
-
-        self.event_que = []
-        self.cur_state = IDLE
-        self.cur_state.enter(self, None)
+        self.keyDownNum = 0
+        self.frame = 0
 
     def update(self):
-        self.cur_state.do(self)
-
-        if self.event_que:
-            event = self.event_que.pop()
-            self.cur_state.exit(self, event)
-            try:
-                self.cur_state = next_state[self.cur_state][event]
-            except KeyError:
-                print('Error: ', self.cur_state, event)
-
-            self.cur_state.enter(self, event)
+        if self.running == True:
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
+            if self.face_dir == 0:
+                self.y += RUN_SPEED_PPS * game_framework.frame_time
+                if self.y > 840:
+                    self.y = 840
+            elif self.face_dir == 1:
+                self.y -= RUN_SPEED_PPS * game_framework.frame_time
+                if self.y < 95:
+                    self.y = 95
+            elif self.face_dir == 2:
+                self.x -= RUN_SPEED_PPS * game_framework.frame_time
+                if self.x < 50:
+                    self.x = 50
+            elif self.face_dir == 3:
+                self.x += RUN_SPEED_PPS * game_framework.frame_time
+                if self.x > 910:
+                    self.x = 910
 
     def draw(self):
-        self.cur_state.draw(self)
-        debug_print('PPPP')
-        debug_print(f'Face Dir: {self.face_dir}, upDown: {self.upDown}, leftRight: {self.leftRight}')
+        if self.keyDownNum == 1:
+            self.running = True
+            if self.face_dir == 0:
+                self.image.clip_draw(int(self.frame) * p1Width, 210, p1Width, p1Height, self.x, self.y, 80, 95)
+            elif self.face_dir == 1:
+                self.image.clip_draw(int(self.frame) * p1Width, 140, p1Width, p1Height, self.x, self.y, 80, 95)
+            elif self.face_dir == 2:
+                self.image.clip_draw(int(self.frame) * p1Width, 0, p1Width, p1Height, self.x, self.y, 80, 95)
+            elif self.face_dir == 3:
+                self.image.clip_draw(int(self.frame) * p1Width, 70, p1Width, p1Height, self.x, self.y, 80, 95)
 
-    def add_event(self, event):
-        self.event_que.insert(0, event)
+        else:
+            self.running = False
+            if self.face_dir == 0:  # 상
+                self.image.clip_draw(0, 210, p1Width, p1Height, self.x, self.y, 80, 95)
+            elif self.face_dir == 1:  # 하
+                self.image.clip_draw(0, 140, p1Width, p1Height, self.x, self.y, 80, 95)
+            elif self.face_dir == 2:  # 좌
+                self.image.clip_draw(0, 0, p1Width, p1Height, self.x, self.y, 80, 95)
+            elif self.face_dir == 3:  # 우
+                self.image.clip_draw(0, 70, p1Width, p1Height, self.x, self.y, 80, 95)
 
     def handle_event(self, event):
-        if (event.type, event.key) in key_event_table:
-            key_event = key_event_table[(event.type, event.key)]
-            self. add_event(key_event)
+
+        if event.type == SDL_QUIT:
+            game_framework.quit()
+
+        elif event.type == SDL_KEYDOWN:
+            match event.key:
+                case pico2d.SDLK_w:
+                    self.keyDownNum += 1
+                    self.face_dir = 0
+                case pico2d.SDLK_s:
+                    self.keyDownNum += 1
+                    self.face_dir = 1
+                case pico2d.SDLK_a:
+                    self.keyDownNum += 1
+                    self.face_dir = 2
+                case pico2d.SDLK_d:
+                    self.keyDownNum += 1
+                    self.face_dir = 3
+
+        elif event.type == SDL_KEYUP:
+            match event.key:
+                case pico2d.SDLK_w:
+                    self.keyDownNum -= 1
+                case pico2d.SDLK_s:
+                    self.keyDownNum -= 1
+                case pico2d.SDLK_a:
+                    self.keyDownNum -= 1
+                case pico2d.SDLK_d:
+                    self.keyDownNum -= 1
