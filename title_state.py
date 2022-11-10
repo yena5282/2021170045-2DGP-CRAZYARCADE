@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
-import play_state
+import map1_play_state
+import map2_play_state
 
 image = None
 
@@ -20,8 +21,10 @@ def handle_events():
         else:
             if (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
                 game_framework.quit()
-            elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
-                game_framework.change_state(play_state)
+            elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_1):
+                game_framework.change_state(map1_play_state)
+            elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_2):
+                game_framework.change_state(map2_play_state)
 def draw():
     clear_canvas()
     image.draw(600,450)
