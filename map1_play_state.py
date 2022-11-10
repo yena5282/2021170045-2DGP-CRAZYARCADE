@@ -12,7 +12,6 @@ from heart import Heart
 map1 = None
 player1 = None
 map1_walls = []
-# map1_wall_x, map1_wall_y = 115, 750
 
 def handle_events():
     events = get_events()
@@ -40,21 +39,6 @@ def enter():
     map1_walls = [Map1_wall() for i in range(40)]
     game_world.add_objects(map1_walls, 1)
 
-    # 첫 번째 행부터 생성
-    # global map1_wall_x, map1_wall_y
-
-    # for map1_wall_y in range()
-    # for i in range(6):
-    #     for j in range(10):
-    # map1_walls = [Map1_wall(map1_wall_x, map1_wall_y) for a in range(60)]
-    # if(j == 5):
-    #     map1_wall_x += 240
-    # elif(j == 10):
-    #     map1_wall_y += 120
-    # else:
-    #     map1_wall_x += 60
-
-
 
     game_world.add_object(map1, 0)
     game_world.add_object(player1, 1)
@@ -65,10 +49,6 @@ def enter():
     game_world.add_object(p2Heart1, 1)
     game_world.add_object(p2Heart2, 1)
     game_world.add_object(p2Heart3, 1)
-
-
-    # game_world.add_object(p2Heart1, 1)
-
 
 def exit():
     game_world.clear()
@@ -93,8 +73,6 @@ def update():
         game_object.update()
 
 def test_self():
-    import map1_play_state
-
     pico2d.open_canvas()
     game_framework.run(map1_play_state)
     pico2d.clear_canvas()
