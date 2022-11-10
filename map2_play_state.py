@@ -1,18 +1,17 @@
 from pico2d import *
 import game_framework
 import game_world
+import title_state
 import map2_play_state
+from map2_wall import Map2_wall
 from map2 import Map2
 from player1 import Player1
 from player2 import Player2
 from heart import Heart
 
-
-import logo_state
-import title_state
-
 map2 = None
 player1 = None
+map2_walls = []
 
 def handle_events():
     events = get_events()
@@ -34,7 +33,12 @@ def enter():
     map2 = Map2()
     p1Heart1, p1Heart2, p1Heart3 = Heart(980+11+25, 625+5+25), Heart(980+11+25+50, 625+30), Heart(980+11+25+100, 625+30)
     p2Heart1, p2Heart2, p2Heart3 = Heart(980+11+25, 500+5+25), Heart(980+11+25+50, 500+5+25), Heart(980+11+25+100, 500+5+25)
-    # p1Heart1 = Heart(980+11+25, 625+5+25)
+
+    # 리스트로 벽들 객체 생성
+    global map2_walls
+    map2_walls = [Map2_wall() for i in range(50)]
+    game_world.add_objects(map2_walls, 1)
+
 
     game_world.add_object(map2, 0)
     game_world.add_object(player1, 1)
@@ -45,9 +49,6 @@ def enter():
     game_world.add_object(p2Heart1, 1)
     game_world.add_object(p2Heart2, 1)
     game_world.add_object(p2Heart3, 1)
-
-    # game_world.add_object(p2Heart1, 1)
-
 
 def exit():
     game_world.clear()

@@ -36,7 +36,7 @@ def enter():
 
     # 리스트로 벽들 객체 생성
     global map1_walls
-    map1_walls = [Map1_wall() for i in range(40)]
+    map1_walls = [Map1_wall() for i in range(50)]
     game_world.add_objects(map1_walls, 1)
 
 

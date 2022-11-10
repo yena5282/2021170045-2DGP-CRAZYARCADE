@@ -19,8 +19,8 @@ FRAMES_PER_ACTION = 5
 
 class Player2:
     def __init__(self):
-        self.x = 870
-        self.y = 795
+        self.x = 900
+        self.y = 820
         self.face_dir = 1  # 상, 하, 좌, 우 = 0, 1, 2, 3
         self.running = False
         self.image = None
