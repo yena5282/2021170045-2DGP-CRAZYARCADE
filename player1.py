@@ -19,8 +19,8 @@ FRAMES_PER_ACTION = 5
 
 class Player1:
     def __init__(self):
-        self.x = 58
-        self.y = 105
+        self.x = 55
+        self.y = 85
         self.face_dir = 1  # 상, 하, 좌, 우 = 0, 1, 2, 3
         self.running = False
         self.image = None
@@ -71,6 +71,9 @@ class Player1:
             elif self.face_dir == 3:  # 우
                 self.image.clip_draw(0, 70, p1Width, p1Height, self.x, self.y, 80, 95)
 
+        draw_rectangle(*self.get_bb())
+        draw_rectangle(*self.get_feet_xy())
+
     def handle_event(self, event):
 
         if event.type == SDL_QUIT:
@@ -101,3 +104,11 @@ class Player1:
                     self.keyDownNum -= 1
                 case pico2d.SDLK_d:
                     self.keyDownNum -= 1
+
+    def get_bb(self):
+        return self.x - 17, self.y - 40, self.x + 17, self.y - 10
+    def get_feet_xy(self):
+        return self.x - 17, self.y - 40, self.x + 17, self.y - 30
+
+    def handle_collision(self, other, group):
+        pass
