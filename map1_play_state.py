@@ -42,19 +42,12 @@ def enter():
     p2Heart1, p2Heart2, p2Heart3 = Heart(980+11+25, 500+5+25), Heart(980+11+25+50, 500+5+25), Heart(980+11+25+100, 500+5+25)
 
 
-    # 리스트로 벽들 객체 생성
-    # global map1_walls
-    # map1_walls = [Map1_wall() for i in range(90)]
+    # 벽들 객체 생성
     map1_walls = map1_wall.Map1_wall.make_wall_list(Map1_wall)
     game_world.add_objects(map1_walls, 2)
     # 충돌 대상 정보를 등록
     game_world.add_collision_pairs(player1, map1_walls, 'player1:map1Wall')
     game_world.add_collision_pairs(player2, map1_walls, 'player2:map1Wall')
-
-    # 리스트로 스케이트 객체 생성
-    # global skates
-    # skates = [Skate() for i in range(90)]
-    # game_world.add_objects(skates, 2)
 
     game_world.add_object(map1, 0)
     game_world.add_object(player1, 3)
