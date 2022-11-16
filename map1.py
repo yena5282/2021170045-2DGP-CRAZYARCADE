@@ -7,6 +7,7 @@ class Map1:
 
     def draw(self):
         self.image.draw(600, 450)
+        draw_rectangle(*self.get_bb())
 
     def update(self):
         pass
@@ -16,3 +17,6 @@ class Map1:
         for event in events():
             if event.type == SDL_QUIT:
                 game_framework.quit()
+
+    def get_bb(self):
+        return 25, 55, 930, 840
