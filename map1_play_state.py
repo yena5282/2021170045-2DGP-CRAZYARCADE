@@ -2,11 +2,12 @@ from pico2d import *
 import game_framework
 import game_world
 import map1_wall
-import skate1
-import title_state
+import skate
+import bubble
 
 from map1_wall import Map1_wall
-from skate1 import Skate1
+from skate import Skate
+from bubble import Bubble
 from map1 import Map1
 from player1 import Player1
 from player2 import Player2
@@ -16,7 +17,8 @@ map1 = None
 player1 = None
 player2 = None
 map1_walls = []
-skates1 = []
+skates = []
+bubbles = []
 
 
 def handle_events():
@@ -24,13 +26,12 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             game_framework.quit()
-        # elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_c):
-        #     game_framework.change_state(title_state)
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
             game_framework.quit()
         else:
             player1.handle_event(event)
             player2.handle_event(event)
+
 
 def enter():
     global player1, player2
@@ -51,13 +52,23 @@ def enter():
     game_world.add_collision_pairs(player1, map1_walls, 'player1:map1Wall')
     game_world.add_collision_pairs(player2, map1_walls, 'player2:map1Wall')
 
+
     # 리스트로 스케이트 객체 생성
-    skates1 = skate1.Skate1.make_skate1_list(Skate1)
+    skates = skate.Skate.make_skate_list(Skate)
     # 아이템 객체는 depth 1에 생성
-    game_world.add_objects(skates1, 1)
+    game_world.add_objects(skates, 1)
     # 충돌 대상 정보를 등록
-    game_world.add_collision_pairs(player1, skates1, 'player1:skate1')
-    game_world.add_collision_pairs(player2, skates1, 'player2:skate1')
+    game_world.add_collision_pairs(player1, skates, 'player1:skate')
+    game_world.add_collision_pairs(player2, skates, 'player2:skate')
+
+
+    # 리스트로 물풍선 객체 생성
+    bubbles = bubble.Bubble.make_bubble_list(Bubble)
+    # 아이템 객체는 depth 1에 생성
+    game_world.add_objects(bubbles, 1)
+    # 충돌 대상 정보를 등록
+    game_world.add_collision_pairs(player1, bubbles, 'player1:bubble')
+    game_world.add_collision_pairs(player2, bubbles, 'player2:bubble')
 
 
     game_world.add_object(map1, 0)
@@ -117,20 +128,40 @@ def update():
                     player2.x -= (a_r - (b_l - 1))
 
             # player와 스케이트가 충돌했을 때 충돌 처리 : 충돌한 스케이트 데이터 없애고, 충돌한 플레이어 이동 속도 증가하도록
-            elif group == 'player1:skate1':
-                if player1.addSpeed >= 0.66:
+            elif group == 'player1:skate':
+                if player1.addSpeed >= 1:
                     pass
                 else:
-                    a.addSpeed += 0.11
+                    a.addSpeed += 0.2
                     a.handle_collision(b, group)
                     b.handle_collision(a, group)
-            elif group == 'player2:skate1':
-                if player2.addSpeed >= 0.66:
+
+            elif group == 'player2:skate':
+                if player2.addSpeed >= 1:
                     pass
                 else:
-                    a.addSpeed += 0.11
+                    a.addSpeed += 0.2
                     a.handle_collision(b, group)
                     b.handle_collision(a, group)
+
+            elif group == 'player1:bubble':
+                if a.bubble_num < 5:
+                    a.use_bubble.append([a.x, a.y, False])
+                    a.bubble_num += 1
+                    a.handle_collision(a, group)
+                    b.handle_collision(b, group)
+                else:
+                    pass
+
+            elif group == 'player2:bubble':
+                if a.bubble_num < 5:
+                    a.use_bubble.append([a.x, a.y, False])
+                    a.bubble_num += 1
+                    a.handle_collision(a, group)
+                    b.handle_collision(b, group)
+                else:
+                    pass
+
 
 def collide(a, b):
     global a_l, a_r, a_b, a_t, b_l, b_r, b_b, b_t

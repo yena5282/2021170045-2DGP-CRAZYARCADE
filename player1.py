@@ -23,11 +23,12 @@ class Player1:
         self.y = 85
         self.face_dir = 1  # 상, 하, 좌, 우 = 0, 1, 2, 3
         self.running = False
-        self.image = None
         self.image = load_image('resource/Player1.png')
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
+        self.bubble_num = 0
+        self.use_bubble = []
 
     def update(self):
         if self.running == True:
@@ -76,12 +77,12 @@ class Player1:
         draw_rectangle(*self.get_feet_xy())
 
     def handle_event(self, event):
-
         if event.type == SDL_QUIT:
             game_framework.quit()
 
         elif event.type == SDL_KEYDOWN:
             match event.key:
+                # 플레이어 이동
                 case pico2d.SDLK_w:
                     self.keyDownNum += 1
                     self.face_dir = 0
@@ -94,6 +95,9 @@ class Player1:
                 case pico2d.SDLK_d:
                     self.keyDownNum += 1
                     self.face_dir = 3
+                # 물풍선 설치
+                # case pico2d.SDLK_SPACE:
+                    # Bubble1.add_bubble(Bubble1, self.x, self.y)
 
         elif event.type == SDL_KEYUP:
             match event.key:
@@ -105,6 +109,7 @@ class Player1:
                     self.keyDownNum -= 1
                 case pico2d.SDLK_d:
                     self.keyDownNum -= 1
+
 
     def get_bb(self):
         return self.x - 17, self.y - 40, self.x + 17, self.y - 10

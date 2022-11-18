@@ -28,6 +28,8 @@ class Player2:
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
+        self.bubble_num = 0
+        self.use_bubble = []
 
     def update(self):
         if self.running == True:
@@ -76,7 +78,6 @@ class Player2:
         draw_rectangle(*self.get_feet_xy())
 
     def handle_event(self, event):
-
         if event.type == SDL_QUIT:
             game_framework.quit()
 
@@ -113,4 +114,6 @@ class Player2:
 
     def handle_collision(self, other, group):
         pass
+
+
 

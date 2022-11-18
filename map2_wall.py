@@ -3,6 +3,7 @@ from pico2d import *
 
 class Map2_wall:
     image = None
+    map2_walls = []
 
     def __init__(self):
         if Map2_wall.image == None:
