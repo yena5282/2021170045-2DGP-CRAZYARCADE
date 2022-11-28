@@ -1,5 +1,11 @@
 from pico2d import *
 import game_framework
+import map1_play_state
+
+# from p1_bubble import asdfBubble
+# from p1_bubble import *
+
+import p1_bubble
 
 p1Width = 65
 p1Height = 70
@@ -13,26 +19,30 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 # player1 애니메이션 속도 계산
-TIME_PER_ACTION = 0.5
-ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 5
+TIME_PER_PLAYER_ACTION = 0.5
+PLAYER_ACTION_PER_TIME = 1.0 / TIME_PER_PLAYER_ACTION
+FRAMES_PER_PLAYER_ACTION = 5
+
+p1_bubbles = []
 
 class Player1:
-    def __init__(self):
+    def __init__(self, bubble_list):
+        global p1_bubbles
+
         self.x = 55
         self.y = 85
         self.face_dir = 1  # 상, 하, 좌, 우 = 0, 1, 2, 3
         self.running = False
-        self.image = load_image('resource/Player1.png')
+        self.player_image = load_image('resource/Player1.png')
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
-        self.bubble_num = 0
-        self.use_bubble = []
+        p1_bubbles = bubble_list
+
 
     def update(self):
         if self.running == True:
-            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 5
+            self.frame = (self.frame + FRAMES_PER_PLAYER_ACTION * PLAYER_ACTION_PER_TIME * game_framework.frame_time) % 5
             if self.face_dir == 0:
                 self.y += (RUN_SPEED_PPS * game_framework.frame_time) + self.addSpeed
                 if self.y > 840:
@@ -54,24 +64,24 @@ class Player1:
         if self.keyDownNum == 1:
             self.running = True
             if self.face_dir == 0:
-                self.image.clip_draw(int(self.frame) * p1Width, 210, p1Width, p1Height, self.x, self.y, 80, 95)
+                self.player_image.clip_draw(int(self.frame) * p1Width, 210, p1Width, p1Height, self.x, self.y, 80, 95)
             elif self.face_dir == 1:
-                self.image.clip_draw(int(self.frame) * p1Width, 140, p1Width, p1Height, self.x, self.y, 80, 95)
+                self.player_image.clip_draw(int(self.frame) * p1Width, 140, p1Width, p1Height, self.x, self.y, 80, 95)
             elif self.face_dir == 2:
-                self.image.clip_draw(int(self.frame) * p1Width, 0, p1Width, p1Height, self.x, self.y, 80, 95)
+                self.player_image.clip_draw(int(self.frame) * p1Width, 0, p1Width, p1Height, self.x, self.y, 80, 95)
             elif self.face_dir == 3:
-                self.image.clip_draw(int(self.frame) * p1Width, 70, p1Width, p1Height, self.x, self.y, 80, 95)
-
+                self.player_image.clip_draw(int(self.frame) * p1Width, 70, p1Width, p1Height, self.x, self.y, 80, 95)
+        # if
         else:
             self.running = False
             if self.face_dir == 0:  # 상
-                self.image.clip_draw(0, 210, p1Width, p1Height, self.x, self.y, 80, 95)
+                self.player_image.clip_draw(0, 210, p1Width, p1Height, self.x, self.y, 80, 95)
             elif self.face_dir == 1:  # 하
-                self.image.clip_draw(0, 140, p1Width, p1Height, self.x, self.y, 80, 95)
+                self.player_image.clip_draw(0, 140, p1Width, p1Height, self.x, self.y, 80, 95)
             elif self.face_dir == 2:  # 좌
-                self.image.clip_draw(0, 0, p1Width, p1Height, self.x, self.y, 80, 95)
+                self.player_image.clip_draw(0, 0, p1Width, p1Height, self.x, self.y, 80, 95)
             elif self.face_dir == 3:  # 우
-                self.image.clip_draw(0, 70, p1Width, p1Height, self.x, self.y, 80, 95)
+                self.player_image.clip_draw(0, 70, p1Width, p1Height, self.x, self.y, 80, 95)
 
         draw_rectangle(*self.get_bb())
         draw_rectangle(*self.get_feet_xy())
@@ -96,8 +106,12 @@ class Player1:
                     self.keyDownNum += 1
                     self.face_dir = 3
                 # 물풍선 설치
-                # case pico2d.SDLK_SPACE:
-                    # Bubble1.add_bubble(Bubble1, self.x, self.y)
+                case pico2d.SDLK_SPACE:
+                    if p1_bubble.asdfBubble.p1_bubble_cnt > 0:
+                        # print(map1_play_state.p1_bubbles)
+                        p1_bubbles[p1_bubble.asdfBubble.p1_bubble_cnt].is_install = True
+                        for i in range(5):
+                            print(p1_bubbles[i].is_install)
 
         elif event.type == SDL_KEYUP:
             match event.key:
@@ -110,11 +124,13 @@ class Player1:
                 case pico2d.SDLK_d:
                     self.keyDownNum -= 1
 
-
     def get_bb(self):
         return self.x - 17, self.y - 40, self.x + 17, self.y - 10
     def get_feet_xy(self):
         return self.x - 17, self.y - 40, self.x + 17, self.y - 30
+
+    def get_player1_xy(self):
+        return self.x, self.y
 
     def handle_collision(self, other, group):
         pass

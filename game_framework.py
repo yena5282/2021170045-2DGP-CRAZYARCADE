@@ -1,5 +1,8 @@
 import time
+
 frame_time = 0.0
+running = None
+stack = None
 
 class GameState:
     def __init__(self, state):
@@ -39,10 +42,6 @@ class TestGameState:
     def draw(self):
         print("State [%s] draw" % self.name)
 
-
-
-running = None
-stack = None
 
 
 def change_state(state):

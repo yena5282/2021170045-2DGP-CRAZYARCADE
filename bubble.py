@@ -2,9 +2,15 @@ from pico2d import *
 import game_world
 import random
 
+# from player1 import Player1
+# from player2 import Player2
+
+# p1 = Player1()
+# p2 = Player2()
+
 class Bubble:
     image = None
-    bubbles = []
+    bubbles = [[0, 0, False]]
     # global p1
 
     def __init__(self):

@@ -2,12 +2,9 @@ from pico2d import *
 import game_framework
 import game_world
 import map2_play_state
-import map2_wall
 import skate
-import bubble
 
 from skate import Skate
-from bubble import Bubble
 from map2_wall import Map2_wall
 from map2 import Map2
 from player1 import Player1
@@ -19,7 +16,6 @@ player1 = None
 player2 = None
 map2_walls = []
 skates = []
-bubbles = []
 
 
 def handle_events():
@@ -45,9 +41,9 @@ def enter():
     p2Heart1, p2Heart2, p2Heart3 = Heart(980+11+25, 500+5+25), Heart(980+11+25+50, 500+5+25), Heart(980+11+25+100, 500+5+25)
 
     # 벽들 객체 생성
-    map2_walls = map2_wall.Map2_wall.make_wall_list(Map2_wall)
+    map2_walls = [Map2_wall() for i in range(90)]
     game_world.add_objects(map2_walls, 2)
-    # 충돌 대상 정보를 등록
+
     game_world.add_collision_pairs(player1, map2_walls, 'player1:map2Wall')
     game_world.add_collision_pairs(player2, map2_walls, 'player2:map2Wall')
 
@@ -58,14 +54,6 @@ def enter():
     # 충돌 대상 정보를 등록
     game_world.add_collision_pairs(player1, skates, 'player1:skate')
     game_world.add_collision_pairs(player2, skates, 'player2:skate')
-
-    # 리스트로 물풍선 객체 생성
-    bubbles = bubble.Bubble.make_bubble_list(Bubble)
-    # 아이템 객체는 depth 1에 생성
-    game_world.add_objects(bubbles, 1)
-    # 충돌 대상 정보를 등록
-    game_world.add_collision_pairs(player1, bubbles, 'player1:bubble')
-    game_world.add_collision_pairs(player2, bubbles, 'player2:bubble')
 
     game_world.add_object(map2, 0)
     game_world.add_object(player1, 3)
@@ -125,38 +113,19 @@ def update():
 
             # player와 스케이트가 충돌했을 때 충돌 처리 : 충돌한 스케이트 데이터 없애고, 충돌한 플레이어 이동 속도 증가하도록
             elif group == 'player1:skate':
-                if player1.addSpeed >= 1:
+                if player1.addSpeed >= 0.66:
                     pass
                 else:
-                    a.addSpeed += 0.2
+                    a.addSpeed += 0.11
                     a.handle_collision(b, group)
                     b.handle_collision(a, group)
-
             elif group == 'player2:skate':
-                if player2.addSpeed >= 1:
+                if player2.addSpeed >= 0.66:
                     pass
                 else:
-                    a.addSpeed += 0.2
+                    a.addSpeed += 0.11
                     a.handle_collision(b, group)
                     b.handle_collision(a, group)
-
-            elif group == 'player1:bubble':
-                if a.bubble_num < 5:
-                    a.use_bubble.append([a.x, a.y, False])
-                    a.bubble_num += 1
-                    a.handle_collision(a, group)
-                    b.handle_collision(b, group)
-                else:
-                    pass
-
-            elif group == 'player2:bubble':
-                if a.bubble_num < 5:
-                    a.use_bubble.append([a.x, a.y, False])
-                    a.bubble_num += 1
-                    a.handle_collision(a, group)
-                    b.handle_collision(b, group)
-                else:
-                    pass
 
 def collide(a, b):
     global a_l, a_r, a_b, a_t, b_l, b_r, b_b, b_t
