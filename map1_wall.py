@@ -1,18 +1,18 @@
 import random
 from pico2d import *
 
-class Map1_wall:
+class C_map1_wall:
     image = None
     map1_Walls = []
 
     def __init__(self):
-        if Map1_wall.image == None:
-            Map1_wall.image = load_image('resource/map1_wall.png')
+        if C_map1_wall.image == None:
+            C_map1_wall.image = load_image('resource/map1_wall.png')
         self.x, self.y = 55+60*random.randint(0, 13),  810-60*random.randint(0, 11)
 
     def make_wall_list(self):
         global map1_walls
-        map1_walls = [Map1_wall() for i in range(90)]
+        map1_walls = [C_map1_wall() for i in range(90)]
         return map1_walls
 
     def draw(self):

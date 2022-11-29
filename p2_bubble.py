@@ -7,17 +7,18 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 3
 
-class C_p1_bubble:
+class C_p2_bubble:
     # image = None
-    p1_bubble_cnt = 1
-    p1_bubble_num = 0
+    p2_bubble_cnt = 1
+    p2_bubble_num = 0
+
     is_install = False
 
     def __init__(self, x, y):
         global is_install
 
         self.x, self.y = x, y
-        self.image = load_image('resource/bubble1.png')
+        self.image = load_image('resource/bubble2.png')
         self.frame = 0
         self.is_install = False
 

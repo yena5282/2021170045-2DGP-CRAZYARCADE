@@ -1,5 +1,9 @@
 from pico2d import *
 import game_framework
+import game_world
+
+import p2_bubble
+import player1
 
 p1Width = 65
 p1Height = 70
@@ -17,19 +21,21 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 5
 
-class Player2:
+p2_bubbles = []
+
+class C_player2:
     def __init__(self):
+        global p2_bubbles
+
         self.x = 900
         self.y = 810
         self.face_dir = 1  # 상, 하, 좌, 우 = 0, 1, 2, 3
         self.running = False
-        self.image = None
         self.image = load_image('resource/Player2.png')
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
-        self.bubble_num = 0
-        self.use_bubble = []
+
 
     def update(self):
         if self.running == True:
@@ -75,7 +81,6 @@ class Player2:
                 self.image.clip_draw(0, 70, p1Width, p1Height, self.x, self.y, 85, 100)
 
         draw_rectangle(*self.get_bb())
-        # draw_rectangle(*self.get_feet_xy())
 
     def handle_event(self, event):
         if event.type == SDL_QUIT:
@@ -83,6 +88,7 @@ class Player2:
 
         elif event.type == SDL_KEYDOWN:
             match event.key:
+                # 플레이어 이동
                 case pico2d.SDLK_UP:
                     self.keyDownNum += 1
                     self.face_dir = 0
@@ -95,6 +101,14 @@ class Player2:
                 case pico2d.SDLK_RIGHT:
                     self.keyDownNum += 1
                     self.face_dir = 3
+
+                # 물풍선 설치
+                case pico2d.SDLK_RETURN:
+                    if p2_bubble.C_p2_bubble.p2_bubble_cnt > p2_bubble.C_p2_bubble.p2_bubble_num:
+                        # 물풍선 설치시 해당 물풍선 좌표 기록 + 객체 생성됨
+                        p2_bubbles.insert(p2_bubble.C_p2_bubble.p2_bubble_num, (p2_bubble.C_p2_bubble((int((self.x-25)/60)*60) + 55, (int(((self.y-20)-55)/60)*60) + 85)))
+                        game_world.add_object(p2_bubbles[p2_bubble.C_p2_bubble.p2_bubble_num], 2)
+                        p2_bubble.C_p2_bubble.p2_bubble_num += 1
 
         elif event.type == SDL_KEYUP:
             match event.key:
@@ -109,10 +123,6 @@ class Player2:
 
     def get_bb(self):
         return self.x - 17, self.y - 40, self.x + 17, self.y - 10
-
-
-    # def get_feet_xy(self):
-    #     return self.x - 17, self.y - 40, self.x + 17, self.y - 30
 
     def handle_collision(self, other, group):
         pass

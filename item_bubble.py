@@ -8,7 +8,7 @@ import random
 # p1 = Player1()
 # p2 = Player2()
 
-class Bubble:
+class C_item_bubble:
     image = None
     bubbles = [[0, 0, False]]
     # global p1
@@ -20,7 +20,7 @@ class Bubble:
 
     def make_bubble_list(self):
         global bubbles
-        bubbles = [Bubble() for i in range(12)]
+        bubbles = [C_item_bubble() for i in range(12)]
         return bubbles
 
     def draw(self):

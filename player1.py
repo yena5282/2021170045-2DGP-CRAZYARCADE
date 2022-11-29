@@ -3,6 +3,7 @@ import game_framework
 import game_world
 
 import p1_bubble
+# import player2
 
 p1Width = 65
 p1Height = 70
@@ -22,9 +23,8 @@ FRAMES_PER_PLAYER_ACTION = 5
 
 p1_bubbles = []
 
-class Player1:
+class C_player1:
     def __init__(self):
-        # global p1_bubbles
         global p1_bubbles
 
         self.x = 55
@@ -35,7 +35,6 @@ class Player1:
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
-        # p1_bubbles = bubble_list
 
 
     def update(self):
@@ -82,7 +81,6 @@ class Player1:
                 self.player_image.clip_draw(0, 70, p1Width, p1Height, self.x, self.y, 80, 95)
 
         draw_rectangle(*self.get_bb())
-        draw_rectangle(*self.get_feet_xy())
 
     def handle_event(self, event):
         if event.type == SDL_QUIT:
@@ -103,12 +101,18 @@ class Player1:
                 case pico2d.SDLK_d:
                     self.keyDownNum += 1
                     self.face_dir = 3
+
                 # 물풍선 설치
-                case pico2d.SDLK_SPACE:
-                    if p1_bubble.C_bubble.p1_bubble_cnt > p1_bubble.C_bubble.p1_bubble_num:
-                        p1_bubbles.insert(p1_bubble.C_bubble.p1_bubble_num, (p1_bubble.C_bubble((int((self.x-25)/60)*60) + 55, (int(((self.y-20)-55)/60)*60) + 85)))
-                        game_world.add_object(p1_bubbles[p1_bubble.C_bubble.p1_bubble_num], 2)
-                        p1_bubble.C_bubble.p1_bubble_num += 1
+                case pico2d.SDLK_LSHIFT:
+                    if p1_bubble.C_p1_bubble.p1_bubble_cnt > p1_bubble.C_p1_bubble.p1_bubble_num:
+                        # 물풍선 설치시 해당 물풍선 좌표 기록 + 객체 생성됨
+                        p1_bubbles.insert(p1_bubble.C_p1_bubble.p1_bubble_num, (p1_bubble.C_p1_bubble((int((self.x-25)/60)*60) + 55, (int(((self.y-20)-55)/60)*60) + 85)))
+                        game_world.add_object(p1_bubbles[p1_bubble.C_p1_bubble.p1_bubble_num], 2)
+
+                        # game_world.add_collision_pairs(C_player1(), player2.p2_bubbles, 'player1:p2bubbles')
+                        # game_world.add_collision_pairs(C_player1, p1_bubbles, 'player1:p1bubbles')
+
+                        p1_bubble.C_p1_bubble.p1_bubble_num += 1
 
         elif event.type == SDL_KEYUP:
             match event.key:
@@ -123,11 +127,10 @@ class Player1:
 
     def get_bb(self):
         return self.x - 17, self.y - 40, self.x + 17, self.y - 10
-    def get_feet_xy(self):
-        return self.x - 17, self.y - 40, self.x + 17, self.y - 30
 
-    def get_player1_xy(self):
-        return self.x, self.y
+
+    # def get_player1_xy(self):
+    #     return self.x, self.y
 
     def handle_collision(self, other, group):
         pass
