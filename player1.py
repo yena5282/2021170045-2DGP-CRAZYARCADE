@@ -106,9 +106,8 @@ class Player1:
                 # 물풍선 설치
                 case pico2d.SDLK_SPACE:
                     if p1_bubble.C_bubble.p1_bubble_cnt > p1_bubble.C_bubble.p1_bubble_num:
-                        p1_bubbles.insert(p1_bubble.C_bubble.p1_bubble_num, (p1_bubble.C_bubble(self.x, self.y)))
+                        p1_bubbles.insert(p1_bubble.C_bubble.p1_bubble_num, (p1_bubble.C_bubble((int((self.x-25)/60)*60) + 55, (int(((self.y-20)-55)/60)*60) + 85)))
                         game_world.add_object(p1_bubbles[p1_bubble.C_bubble.p1_bubble_num], 2)
-                        print(p1_bubbles)
                         p1_bubble.C_bubble.p1_bubble_num += 1
 
         elif event.type == SDL_KEYUP:
