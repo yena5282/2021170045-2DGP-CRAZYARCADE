@@ -7,7 +7,7 @@ import bubble
 import p1_bubble
 import player1
 
-# from p1_bubble import asdfBubble
+# from p1_bubble import C_bubble
 from map1_wall import Map1_wall
 from skate import Skate
 from bubble import Bubble
@@ -45,6 +45,7 @@ def enter():
     global p1_bubbles, skates, map1_walls
 
     gPlayer2 = Player2()
+    gPlayer1 = player1.Player1()
     map1 = Map1()
     p1Heart1, p1Heart2, p1Heart3 = Heart(980+11+25, 625+5+25), Heart(980+11+25+50, 625+30), Heart(980+11+25+100, 625+30)
     p2Heart1, p2Heart2, p2Heart3 = Heart(980+11+25, 500+5+25), Heart(980+11+25+50, 500+5+25), Heart(980+11+25+100, 500+5+25)
@@ -54,11 +55,11 @@ def enter():
     # print(p1_bubbles)
     # game_world.add_objects(p1_bubbles, 2)
     # 충돌 대상 정보를 등록
-    game_world.add_collision_pairs(gPlayer1, p1_bubbles, 'player1:p1_bubble')
-    p1_bubbles = p1_bubble.asdfBubble.make_bubble_list(p1_bubble.asdfBubble)
-    game_world.add_objects(p1_bubbles, 2)
-    print(p1_bubbles)
-    gPlayer1 = player1.Player1(p1_bubbles)
+    # game_world.add_collision_pairs(gPlayer1, p1_bubbles, 'player1:p1_bubble')
+    # p1_bubbles = p1_bubble.C_bubble.make_bubble_list(p1_bubble.C_bubble)
+    # game_world.add_objects(p1_bubbles, 2)
+    # print(p1_bubbles)
+    # gPlayer1 = player1.Player1(p1_bubbles)
 
 
     # 벽들 객체 생성
@@ -163,8 +164,8 @@ def update():
 
             # player와 물풍선 아이템이 충돌했을 때 충돌 처리 : 충돌한 물풍선 아이템 데이터 없애고, 충돌한 플레이어의 사용 가능 물풍선 개수(물풍선 리스트) 증가하도록 물풍선 리스트 추가
             elif group == 'player1:bubble':
-                if p1_bubble.asdfBubble.p1_bubble_cnt < 5:
-                    p1_bubble.asdfBubble.p1_bubble_cnt += 1
+                if p1_bubble.C_bubble.p1_bubble_cnt < 5:
+                    p1_bubble.C_bubble.p1_bubble_cnt += 1
                     # P1_bubble.bubbles.append([1300, 0, False])
                     a.handle_collision(a, group)
                     b.handle_collision(b, group)

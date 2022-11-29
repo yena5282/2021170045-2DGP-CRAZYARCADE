@@ -1,9 +1,6 @@
 from pico2d import *
 import game_framework
-import map1_play_state
-
-# from p1_bubble import asdfBubble
-# from p1_bubble import *
+import game_world
 
 import p1_bubble
 
@@ -26,7 +23,8 @@ FRAMES_PER_PLAYER_ACTION = 5
 p1_bubbles = []
 
 class Player1:
-    def __init__(self, bubble_list):
+    def __init__(self):
+        # global p1_bubbles
         global p1_bubbles
 
         self.x = 55
@@ -37,7 +35,7 @@ class Player1:
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
-        p1_bubbles = bubble_list
+        # p1_bubbles = bubble_list
 
 
     def update(self):
@@ -107,11 +105,11 @@ class Player1:
                     self.face_dir = 3
                 # 물풍선 설치
                 case pico2d.SDLK_SPACE:
-                    if p1_bubble.asdfBubble.p1_bubble_cnt > 0:
-                        # print(map1_play_state.p1_bubbles)
-                        p1_bubbles[p1_bubble.asdfBubble.p1_bubble_cnt].is_install = True
-                        for i in range(5):
-                            print(p1_bubbles[i].is_install)
+                    if p1_bubble.C_bubble.p1_bubble_cnt > p1_bubble.C_bubble.p1_bubble_num:
+                        p1_bubbles.insert(p1_bubble.C_bubble.p1_bubble_num, (p1_bubble.C_bubble(self.x, self.y)))
+                        game_world.add_object(p1_bubbles[p1_bubble.C_bubble.p1_bubble_num], 2)
+                        print(p1_bubbles)
+                        p1_bubble.C_bubble.p1_bubble_num += 1
 
         elif event.type == SDL_KEYUP:
             match event.key:
