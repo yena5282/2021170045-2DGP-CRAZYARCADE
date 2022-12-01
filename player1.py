@@ -1,8 +1,9 @@
 from pico2d import *
 import game_framework
 import game_world
-
+import map1_play_state
 import p1_bubble
+import time
 # import player2
 
 p1Width = 65
@@ -24,6 +25,7 @@ FRAMES_PER_PLAYER_ACTION = 5
 p1_bubbles = []
 
 class C_player1:
+    bubble_install_sound = None
     def __init__(self):
         global p1_bubbles
 
@@ -35,6 +37,9 @@ class C_player1:
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
+        # if C_player1.bubble_install_sound is None:
+        #     C_player1.bubble_install_sound = load_wav('resource/bubble_install.ogg')
+        #     C_player1.bubble_install_sound.set_volume(50)
 
 
     def update(self):
@@ -56,6 +61,7 @@ class C_player1:
                 self.x += (RUN_SPEED_PPS * game_framework.frame_time) + self.addSpeed
                 if self.x > 910:
                     self.x = 910
+
 
     def draw(self):
         if self.keyDownNum == 1:
@@ -102,17 +108,23 @@ class C_player1:
                     self.keyDownNum += 1
                     self.face_dir = 3
 
+
                 # 물풍선 설치
                 case pico2d.SDLK_LSHIFT:
                     if p1_bubble.C_p1_bubble.p1_bubble_cnt > p1_bubble.C_p1_bubble.p1_bubble_num:
+
                         # 물풍선 설치시 해당 물풍선 좌표 기록 + 객체 생성됨
-                        p1_bubbles.insert(p1_bubble.C_p1_bubble.p1_bubble_num, (p1_bubble.C_p1_bubble((int((self.x-25)/60)*60) + 55, (int(((self.y-20)-55)/60)*60) + 85)))
+                        p1_bubbles.insert(p1_bubble.C_p1_bubble.p1_bubble_num, (p1_bubble.C_p1_bubble((int((self.x-25)/60)*60) + 55, (int(((self.y-20)-55)/60)*60) + 85, time.time())))
                         game_world.add_object(p1_bubbles[p1_bubble.C_p1_bubble.p1_bubble_num], 2)
 
-                        # game_world.add_collision_pairs(C_player1(), player2.p2_bubbles, 'player1:p2bubbles')
-                        # game_world.add_collision_pairs(C_player1, p1_bubbles, 'player1:p1bubbles')
+                        # 충돌 대상 정보 등록
+                        if p1_bubble.C_p1_bubble.p1_bubble_num == 0:
+                            game_world.add_collision_pairs(map1_play_state.g_player1, p1_bubbles[p1_bubble.C_p1_bubble.p1_bubble_num], 'player1:p1Bubble')
+                        else:
+                            game_world.add_collision_pairs(None, p1_bubbles[p1_bubble.C_p1_bubble.p1_bubble_num], 'player1:p1Bubble')
 
                         p1_bubble.C_p1_bubble.p1_bubble_num += 1
+
 
         elif event.type == SDL_KEYUP:
             match event.key:

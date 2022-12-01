@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
 import game_world
+import map1_play_state
 
 import p2_bubble
 import player1
@@ -105,6 +106,7 @@ class C_player2:
                 # 물풍선 설치
                 case pico2d.SDLK_RETURN:
                     if p2_bubble.C_p2_bubble.p2_bubble_cnt > p2_bubble.C_p2_bubble.p2_bubble_num:
+                        map1_play_state.g_all_bubbles_af_cnt += 1
                         # 물풍선 설치시 해당 물풍선 좌표 기록 + 객체 생성됨
                         p2_bubbles.insert(p2_bubble.C_p2_bubble.p2_bubble_num, (p2_bubble.C_p2_bubble((int((self.x-25)/60)*60) + 55, (int(((self.y-20)-55)/60)*60) + 85)))
                         game_world.add_object(p2_bubbles[p2_bubble.C_p2_bubble.p2_bubble_num], 2)

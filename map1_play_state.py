@@ -1,4 +1,5 @@
 from pico2d import *
+import time
 import game_framework
 import game_world
 import skate
@@ -19,7 +20,7 @@ g_player2 = None
 map1_walls = []
 skates = []
 potions = []
-
+g_all_bubbles =[]
 
 def handle_events():
     events = get_events()
@@ -81,11 +82,6 @@ def enter():
     game_world.add_collision_pairs(g_player1, bubbles, 'player1:bubble')
     game_world.add_collision_pairs(g_player2, bubbles, 'player2:bubble')
 
-    # game_world.add_collision_pairs(player2.C_player2, player1.p1_bubbles, 'player2:p1bubbles')
-    # game_world.add_collision_pairs(player1.C_player1, player1.p1_bubbles, 'player1:p1bubbles')
-    #
-    # game_world.add_collision_pairs(player2.C_player2, player2.p2_bubbles, 'player2:p2bubbles')
-    # game_world.add_collision_pairs(player1.C_player1, player2.p2_bubbles, 'player1:p2bubbles')
 
     game_world.add_object(map1, 0)
     game_world.add_object(g_player1, 3)
@@ -122,6 +118,16 @@ def update():
         game_object.update()
 
     for a, b, group in game_world.all_collision_pairs():
+        if group == 'player1:p1Bubble':
+            for i in range(C_p1_bubble.p1_bubble_num):
+                if player1.p1_bubbles[0]:
+                    if i > 0:
+                        i -= 1
+                    if time.time() - player1.p1_bubbles[i].time > 3:
+                        game_world.remove_object(player1.p1_bubbles[i])
+                        player1.p1_bubbles.pop(i)
+                        C_p1_bubble.p1_bubble_num -= 1
+
         if collide(a, b) == True:
             # player와 벽이 충돌했을때 충돌 처리 : 해당 진행 방향으로 나아가지 못하도록
             if group == 'player1:map1Wall':
@@ -186,6 +192,18 @@ def update():
                     b.handle_collision(b, group)
                 else:
                     pass
+
+            elif group == 'player1:p1Bubble':
+                if time.time() - b.time > 1:
+                    if g_player1.face_dir == 0:
+                        g_player1.y -= (a_t - (b_b-1))
+                    elif g_player1.face_dir == 1:
+                        g_player1.y += (b_t - (a_b-1))
+                    elif g_player1.face_dir == 2:
+                        g_player1.x += (b_r - (a_l-1))
+                    elif g_player1.face_dir == 3:
+                        g_player1.x -= (a_r - (b_l-1))
+
 
 
 def collide(a, b):

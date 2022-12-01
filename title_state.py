@@ -4,10 +4,16 @@ import map1_play_state
 import map2_play_state
 
 image = None
+bgm = None
 
 def enter():
     global image
+    global bgm
     image = load_image('resource/title.png')
+    bgm = load_music('resource/title.ogg')
+    bgm.set_volume(40)
+    bgm.repeat_play()
+
 
 def exit():
     global image
