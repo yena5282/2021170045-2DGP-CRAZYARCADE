@@ -7,6 +7,7 @@ import item_potion
 import player1
 import player2
 import bubble_flow
+import back
 
 from p1_bubble import C_p1_bubble
 from p2_bubble import C_p2_bubble
@@ -101,6 +102,9 @@ def enter():
     game_world.add_object(p2Heart2, 2)
     game_world.add_object(p2Heart3, 2)
 
+    back_ui = back.C_back()
+    game_world.add_object(back_ui, 3)
+
 def exit():
     game_world.clear()
 
@@ -127,8 +131,6 @@ def update():
 
     for a, b, group in game_world.all_collision_pairs():
         if group == 'player2:p2Bubble':
-            print('dfefs')
-
             for i in range(C_p2_bubble.p2_bubble_num):
                 if player2.p2_bubbles[0]:
                     if i > 0:
