@@ -1,10 +1,12 @@
-import random
 from pico2d import*
+import random
 import game_world
 
 class C_potion:
     image = None
     potions = []
+    p1_flow_cnt = 1
+    p2_flow_cnt = 1
 
     def __init__(self):
         if self.image == None:

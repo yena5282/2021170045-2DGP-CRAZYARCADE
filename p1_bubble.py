@@ -19,12 +19,10 @@ class C_p1_bubble:
         self.frame = 0
         self.time = install_time
         self.bubble_install_sound = load_wav('resource/bubble_install.ogg')
-        self.bubble_install_sound.set_volume(100)
+        self.bubble_install_sound.set_volume(128)
         self.bubble_install_sound.play()
-        # past_time = time.time()
 
     def update(self):
-        global current_time, bubble_install_time, past_time
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
         self.install_time = time.time()
 

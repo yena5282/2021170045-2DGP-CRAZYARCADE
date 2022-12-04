@@ -6,6 +6,7 @@ import skate
 import item_potion
 import player1
 import player2
+import bubble_flow
 
 from p1_bubble import C_p1_bubble
 from p2_bubble import C_p2_bubble
@@ -20,7 +21,17 @@ g_player2 = None
 map1_walls = []
 skates = []
 potions = []
-g_all_bubbles =[]
+p1_center_flows = []
+p1_up_flows = []
+p1_down_flows = []
+p1_left_flows = []
+p1_right_flows = []
+p2_center_flows = []
+p2_up_flows = []
+p2_down_flows = []
+p2_left_flows = []
+p2_right_flows = []
+pop_first = False
 
 def handle_events():
     events = get_events()
@@ -32,7 +43,6 @@ def handle_events():
         else:
             g_player1.handle_event(event)
             g_player2.handle_event(event)
-
 
 def enter():
     global g_player1, g_player2
@@ -114,19 +124,104 @@ def resume():
 def update():
     global a_l, a_r, a_b, a_t, b_l, b_r, b_b, b_t
     global g_player1, g_player2
+    global pop_first
     for game_object in game_world.all_objects():
         game_object.update()
 
     for a, b, group in game_world.all_collision_pairs():
+        if group == 'player2:p2Bubble':
+            for i in range(C_p2_bubble.p2_bubble_num):
+                if player2.p2_bubbles[0]:
+                    if i > 0:
+                        i -= 1
+                    if time.time() - player2.p2_bubbles[i].time > 3:
+
+                        game_world.remove_object(player2.p2_bubbles[i])
+                        # 물풍선 사라지면 해당 위치에 물줄기 객체 생성
+                        # 중앙
+                        p2_center_flows.insert(i, (
+                            bubble_flow.C_p2_center_flow(player2.p2_bubbles[i].x, player2.p2_bubbles[i].y,
+                                                         time.time())))
+                        game_world.add_object(p2_center_flows[i], 1)
+                        # game_world.add_collision_pairs(g_player2, p2_center_flows[i], 'player2:centerFlow')
+
+                        # 상
+                        p2_up_flows.insert(i, (
+                            bubble_flow.C_p2_up_flow(player2.p2_bubbles[i].x, player2.p2_bubbles[i].y,
+                                                     time.time())))
+                        game_world.add_object(p2_up_flows[i], 1)
+
+                        # 하
+                        p2_down_flows.insert(i, (
+                            bubble_flow.C_p2_down_flow(player2.p2_bubbles[i].x, player2.p2_bubbles[i].y,
+                                                       time.time())))
+                        game_world.add_object(p2_down_flows[i], 1)
+
+                        # 좌
+                        p2_left_flows.insert(i, (
+                            bubble_flow.C_p2_left_flow(player2.p2_bubbles[i].x, player2.p2_bubbles[i].y,
+                                                       time.time())))
+                        game_world.add_object(p2_left_flows[i], 1)
+
+                        # 우
+                        p2_right_flows.insert(i, (
+                            bubble_flow.C_p2_right_flow(player2.p2_bubbles[i].x, player2.p2_bubbles[i].y,
+                                                        time.time())))
+                        game_world.add_object(p2_right_flows[i], 1)
+
+                        player2.p2_bubbles.pop(i)
+                        C_p2_bubble.p2_bubble_num -= 1
+
         if group == 'player1:p1Bubble':
             for i in range(C_p1_bubble.p1_bubble_num):
                 if player1.p1_bubbles[0]:
                     if i > 0:
                         i -= 1
+
                     if time.time() - player1.p1_bubbles[i].time > 3:
                         game_world.remove_object(player1.p1_bubbles[i])
+                        # 물풍선 사라지면 해당 위치에 물줄기 객체 생성
+                        # 중앙
+                        p1_center_flows.insert(i, (bubble_flow.C_p1_center_flow(player1.p1_bubbles[i].x, player1.p1_bubbles[i].y, time.time())))
+                        game_world.add_object(p1_center_flows[i], 1)
+                        # game_world.add_collision_pairs(g_player1, p1_center_flows[i], 'player1:centerFlow')
+
+                        # 상
+                        p1_up_flows.insert(i, (
+                            bubble_flow.C_p1_up_flow(player1.p1_bubbles[i].x, player1.p1_bubbles[i].y,
+                                                         time.time())))
+                        game_world.add_object(p1_up_flows[i], 1)
+
+                        # 하
+                        p1_down_flows.insert(i, (
+                            bubble_flow.C_p1_down_flow(player1.p1_bubbles[i].x, player1.p1_bubbles[i].y,
+                                                         time.time())))
+                        game_world.add_object(p1_down_flows[i], 1)
+
+                        # 좌
+                        p1_left_flows.insert(i, (
+                            bubble_flow.C_p1_left_flow(player1.p1_bubbles[i].x, player1.p1_bubbles[i].y,
+                                                         time.time())))
+                        game_world.add_object(p1_left_flows[i], 1)
+
+                        # 우
+                        p1_right_flows.insert(i, (
+                            bubble_flow.C_p1_right_flow(player1.p1_bubbles[i].x, player1.p1_bubbles[i].y,
+                                                         time.time())))
+                        game_world.add_object(p1_right_flows[i], 1)
+
                         player1.p1_bubbles.pop(i)
                         C_p1_bubble.p1_bubble_num -= 1
+
+        # if group == 'player1:centerFlow':
+        #     for i in range(item_potion.C_potion.p1_flow_cnt-1):
+        #         if p1_center_flows[0]:
+        #             if i > 0:
+        #                 i -= 1
+        #             if time.time() - p1_center_flows[i].time > 1:
+        #                 game_world.remove_object(p1_center_flows[i])
+        #                 p1_center_flows.pop(i)
+        #     print(p1_center_flows)
 
         if collide(a, b) == True:
             # player와 벽이 충돌했을때 충돌 처리 : 해당 진행 방향으로 나아가지 못하도록
@@ -169,10 +264,12 @@ def update():
 
             # player와 물약 아이템이 충돌했을 때 충돌 처리 : 충돌한 물약 아이템 없애고, 충돌한 player의 bubble_flow 한 칸씩 사방으로 늘리기
             elif group == 'player1:potion':
+                item_potion.C_potion.p1_flow_cnt += 1
                 a.handle_collision(b, group)
                 b.handle_collision(a, group)
 
             elif group == 'player2:potion':
+                item_potion.C_potion.p2_flow_cnt += 1
                 a.handle_collision(b, group)
                 b.handle_collision(a, group)
 
@@ -203,6 +300,17 @@ def update():
                         g_player1.x += (b_r - (a_l-1))
                     elif g_player1.face_dir == 3:
                         g_player1.x -= (a_r - (b_l-1))
+
+            elif group == 'player2:p2Bubble':
+                if time.time() - b.time > 1:
+                    if g_player2.face_dir == 0:
+                        g_player2.y -= (a_t - (b_b-1))
+                    elif g_player2.face_dir == 1:
+                        g_player2.y += (b_t - (a_b-1))
+                    elif g_player2.face_dir == 2:
+                        g_player2.x += (b_r - (a_l-1))
+                    elif g_player2.face_dir == 3:
+                        g_player2.x -= (a_r - (b_l-1))
 
 
 

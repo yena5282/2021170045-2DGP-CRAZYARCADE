@@ -2,9 +2,9 @@ from pico2d import *
 import game_framework
 import game_world
 import map1_play_state
+import map2_play_state
 import p1_bubble
 import time
-# import player2
 
 p1Width = 65
 p1Height = 70
@@ -27,8 +27,6 @@ p1_bubbles = []
 class C_player1:
     bubble_install_sound = None
     def __init__(self):
-        global p1_bubbles
-
         self.x = 55
         self.y = 85
         self.face_dir = 1  # 상, 하, 좌, 우 = 0, 1, 2, 3
@@ -37,9 +35,6 @@ class C_player1:
         self.keyDownNum = 0
         self.frame = 0
         self.addSpeed = 0.0
-        # if C_player1.bubble_install_sound is None:
-        #     C_player1.bubble_install_sound = load_wav('resource/bubble_install.ogg')
-        #     C_player1.bubble_install_sound.set_volume(50)
 
 
     def update(self):
@@ -120,6 +115,7 @@ class C_player1:
                         # 충돌 대상 정보 등록
                         if p1_bubble.C_p1_bubble.p1_bubble_num == 0:
                             game_world.add_collision_pairs(map1_play_state.g_player1, p1_bubbles[p1_bubble.C_p1_bubble.p1_bubble_num], 'player1:p1Bubble')
+                            game_world.add_collision_pairs(map2_play_state.g_player1, p1_bubbles[p1_bubble.C_p1_bubble.p1_bubble_num], 'player1:p1Bubble')
                         else:
                             game_world.add_collision_pairs(None, p1_bubbles[p1_bubble.C_p1_bubble.p1_bubble_num], 'player1:p1Bubble')
 
@@ -139,10 +135,6 @@ class C_player1:
 
     def get_bb(self):
         return self.x - 17, self.y - 40, self.x + 17, self.y - 10
-
-
-    # def get_player1_xy(self):
-    #     return self.x, self.y
 
     def handle_collision(self, other, group):
         pass

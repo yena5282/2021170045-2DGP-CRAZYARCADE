@@ -4,6 +4,9 @@ import game_framework
 class Map2:
     def __init__(self):
         self.image = load_image('resource/map2.png')
+        self.bgm = load_music('resource/map2.ogg')
+        self.bgm.set_volume(25)
+        self.bgm.repeat_play()
 
     def draw(self):
         self.image.draw(600, 450)

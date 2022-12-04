@@ -5,8 +5,9 @@ class Map1:
     def __init__(self):
         self.image = load_image('resource/map1.png')
         self.bgm = load_music('resource/map1.ogg')
-        self.bgm.set_volume(20)
+        self.bgm.set_volume(25)
         self.bgm.repeat_play()
+
     def draw(self):
         self.image.draw(600, 450)
         draw_rectangle(*self.get_bb())

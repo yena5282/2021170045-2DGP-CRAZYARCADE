@@ -11,7 +11,7 @@ def enter():
     global bgm
     image = load_image('resource/title.png')
     bgm = load_music('resource/title.ogg')
-    bgm.set_volume(40)
+    bgm.set_volume(50)
     bgm.repeat_play()
 
 
